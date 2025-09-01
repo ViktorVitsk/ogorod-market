@@ -1,6 +1,9 @@
 [tool.poetry]  # Добавьте эту секцию для конфигурации Poetry
 packages = [{include = "app"}]
 
+[tool.poetry.scripts]
+migrate = "alembic.config:main"
+
 [project]
 name = "ogorod-market-api"
 version = "0.1.0"
