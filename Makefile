@@ -8,3 +8,6 @@ down:
 
 logs:
 	docker compose logs -f
+
+seed:
+	cd apps/api && poetry run python scripts/seed_database.py
