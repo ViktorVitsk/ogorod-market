@@ -6,7 +6,11 @@ export const metadata: Metadata = {
   description: 'Натуральные продукты от местных фермеров',
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   return (
     <html lang="ru">
       <body className="antialiased">{children}</body>

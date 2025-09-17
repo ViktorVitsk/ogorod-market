@@ -1,23 +1,28 @@
-from pydantic import BaseModel
 from datetime import datetime
 from decimal import Decimal
+
+from pydantic import BaseModel
+
 
 class ProductBase(BaseModel):
     name: str
     slug: str
     description: str | None = None
     price: Decimal
-    unit: str = "кг"
+    unit: str = 'кг'
     stock_quantity: int = 0
     category_id: int | None = None
     image_url: str | None = None
     is_featured: bool = False
 
+
 class ProductCreate(ProductBase):
     pass
 
+
 class ProductUpdate(ProductBase):
     pass
+
 
 class ProductInDB(ProductBase):
     id: int
@@ -26,6 +31,7 @@ class ProductInDB(ProductBase):
 
     class Config:
         from_attributes = True
+
 
 # Для ответа API используем эту схему (без служебных полей)
 class Product(ProductInDB):

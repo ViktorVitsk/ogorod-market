@@ -11,8 +11,12 @@ export default function HomePage() {
 
       <main className="container mx-auto px-4 py-8">
         <div className="text-center">
-          <h2 className="text-4xl font-bold text-green-700 mb-8">Свежие овощи прямо с грядки</h2>
-          <p className="text-lg text-gray-600 mb-8">Натуральные продукты от местных фермеров</p>
+          <h2 className="text-4xl font-bold text-green-700 mb-8">
+            Свежие овощи прямо с грядки
+          </h2>
+          <p className="text-lg text-gray-600 mb-8">
+            Натуральные продукты от местных фермеров
+          </p>
 
           <Link
             href="/catalog"
