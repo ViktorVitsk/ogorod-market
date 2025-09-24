@@ -1,4 +1,4 @@
-.PHONY: up down logs seed api web
+.PHONY: up down logs build clean
 
 up:
 	docker compose up -d
@@ -9,15 +9,20 @@ down:
 logs:
 	docker compose logs -f
 
+build:
+	docker compose build
+
+clean:
+	docker compose down -v
+	docker system prune -f
+
+# Композитные команды (не нужны в .PHONY)
+rebuild: down build up logs
+
 seed:
-	cd apps/api && poetry run python scripts/seed_database.py
+	docker compose exec api python scripts/seed_products.py
 
-api:
-	cd apps/api && poetry run uvicorn app.main:app --reload --port 8000
+migrate:
+	docker compose exec api alembic upgrade head
 
-web:
-	cd apps/web && pnpm dev	
-
-dev: up
-		make api & 
-		make web
+dev: down build up logs
