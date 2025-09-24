@@ -1,5 +1,6 @@
 from datetime import datetime
 from decimal import Decimal
+from typing import Optional
 
 from pydantic import BaseModel
 
@@ -7,12 +8,12 @@ from pydantic import BaseModel
 class ProductBase(BaseModel):
     name: str
     slug: str
-    description: str | None = None
-    price: Decimal
+    description: Optional[str] = None
+    price: float
     unit: str = 'кг'
     stock_quantity: int = 0
-    category_id: int | None = None
-    image_url: str | None = None
+    category_id: Optional[int] = None
+    image_url: Optional[str] = None
     is_featured: bool = False
 
 
@@ -21,7 +22,15 @@ class ProductCreate(ProductBase):
 
 
 class ProductUpdate(ProductBase):
-    pass
+    name: Optional[str] = None
+    slug: Optional[str] = None
+    description: Optional[str] = None
+    price: Optional[float] = None
+    unit: Optional[str] = None
+    stock_quantity: Optional[int] = None
+    category_id: Optional[int] = None
+    image_url: Optional[str] = None
+    is_featured: Optional[bool] = None
 
 
 class ProductInDB(ProductBase):

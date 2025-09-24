@@ -1,9 +1,13 @@
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, declarative_base
+from sqlalchemy.pool import NullPool
 
 from .config import settings
 
-engine = create_async_engine(settings.database_url, echo=True)
+# Единая Base для всех моделей
+Base = declarative_base()
+
+engine = create_async_engine(settings.database_url, echo=True, poolclass=NullPool)
 AsyncSessionLocal = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
 
