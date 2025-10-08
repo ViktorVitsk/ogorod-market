@@ -1,4 +1,4 @@
-.PHONY: up down logs build clean types
+.PHONY: up down logs build clean types wait-api
 
 up:
 	docker compose up -d
@@ -16,7 +16,15 @@ clean:
 	docker compose down -v
 	docker system prune -f
 
-types:
+wait-api:
+	@echo "Waiting for API to be ready..."
+	@until curl -s http://localhost:8000/health >/dev/null; do \
+		echo "Waiting for API..."; \
+		sleep 2; \
+	done
+	@echo "API is ready!"
+
+types: wait-api
 	cd apps/api && poetry run python ../../scripts/generate-openapi.py
 	cd apps/web && pnpm openapi-typescript ../../openapi.json --output src/types/api.d.ts
 
@@ -29,4 +37,4 @@ seed:
 migrate:
 	docker compose exec api alembic upgrade head
 
-dev: down build up logs
+dev: down up types build logs

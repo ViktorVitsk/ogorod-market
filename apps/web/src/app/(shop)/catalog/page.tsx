@@ -1,3 +1,5 @@
+'use client'
+
 import { useProducts } from '@/hooks/useProducts'
 import Link from 'next/link'
 
