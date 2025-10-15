@@ -47,10 +47,11 @@ ogorod-market/
 - [x] Type-safe API client
 - [x] Responsive UI with Tailwind CSS
 - [x] User registration and JWT-based login
+- [x] Authenticated frontend (login/register forms, token handling)
 - [x] Health-check endpoint for readiness probes
 
 ## 🚧 In Progress / Planned Features
-- [ ] Authentication & Authorization (JWT + Redis)
+- [ ] Authorization & session hardening (Redis-backed refresh tokens)
 - [ ] Shopping cart functionality
 - [ ] Order management system
 - [ ] AI consultant integration
@@ -99,6 +100,7 @@ useEffect(() => { /* direct API calls */ }, [])
 ### API Design Principles
 - **RESTful endpoints** with `/api` prefix
 - **Authentication** endpoints (`/api/auth/register`, `/api/auth/login`, `/api/auth/me`)
+- **Bearer-токен** в заголовке `Authorization` (хранится в localStorage, проксируется axios-интерцептором)
 - **Health-check** endpoint at `/api/health`
 - **Async/await** throughout the backend
 - **Pydantic schemas** for request/response validation
