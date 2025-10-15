@@ -25,6 +25,7 @@ async def register_user(db: AsyncSession, user_in: UserCreate) -> User:
             status_code=status.HTTP_400_BAD_REQUEST,
             detail='User with this email already exists',
         )
+
     user = User(
         email=user_in.email,
         full_name=user_in.full_name,
