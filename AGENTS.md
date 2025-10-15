@@ -9,7 +9,7 @@ ogorod-market/
 │   ├── api/                    # FastAPI Backend
 │   │   ├── app/
 │   │   │   ├── core/          # Configuration, Database, Middleware
-│   │   │   ├── modules/       # Business Modules (catalog, auth*, cart*)
+│   │   │   ├── modules/       # Business Modules (catalog, auth, cart*)
 │   │   │   └── main.py        # App Factory
 │   │   ├── alembic/           # Database Migrations
 │   │   └── pyproject.toml     # Python Dependencies (Poetry)
@@ -46,6 +46,7 @@ ogorod-market/
 - [x] Database seeding with sample vegetables
 - [x] Type-safe API client
 - [x] Responsive UI with Tailwind CSS
+- [x] User registration and JWT-based login
 - [x] Health-check endpoint for readiness probes
 
 ## 🚧 In Progress / Planned Features
@@ -97,6 +98,7 @@ useEffect(() => { /* direct API calls */ }, [])
 
 ### API Design Principles
 - **RESTful endpoints** with `/api` prefix
+- **Authentication** endpoints (`/api/auth/register`, `/api/auth/login`, `/api/auth/me`)
 - **Health-check** endpoint at `/api/health`
 - **Async/await** throughout the backend
 - **Pydantic schemas** for request/response validation
