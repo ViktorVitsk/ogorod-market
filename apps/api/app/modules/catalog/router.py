@@ -1,6 +1,6 @@
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
@@ -32,3 +32,35 @@ async def read_product_by_slug(slug: str, db: AsyncSession = Depends(get_db)):
     if product is None:
         raise HTTPException(status_code=404, detail='Product not found')
     return product
+
+
+@router.post('/', response_model=schemas.Product, status_code=status.HTTP_201_CREATED)
+async def create_product(
+    product_in: schemas.ProductCreate, db: AsyncSession = Depends(get_db)
+):
+    product = await service.create_product(db, product_in)
+    return product
+
+
+@router.patch('/{product_id}', response_model=schemas.Product)
+async def update_product(
+    product_id: int,
+    product_in: schemas.ProductUpdate,
+    db: AsyncSession = Depends(get_db),
+):
+    product = await service.get_product(db, product_id)
+    if product is None:
+        raise HTTPException(status_code=404, detail='Product not found')
+    updated = await service.update_product(db, product, product_in)
+    return updated
+
+
+@router.delete(
+    '/{product_id}', response_model=schemas.Product, status_code=status.HTTP_200_OK
+)
+async def delete_product(product_id: int, db: AsyncSession = Depends(get_db)):
+    product = await service.get_product(db, product_id)
+    if product is None:
+        raise HTTPException(status_code=404, detail='Product not found')
+    deactivated = await service.deactivate_product(db, product)
+    return deactivated

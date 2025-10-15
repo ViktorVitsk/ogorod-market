@@ -8,3 +8,8 @@ app = FastAPI(title='Ogorod Market API')
 setup_middleware(app)
 
 app.include_router(catalog_router, prefix='/api')
+
+
+@app.get('/api/health')
+async def health_check():
+    return {'status': 'ok'}

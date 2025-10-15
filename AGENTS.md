@@ -18,8 +18,7 @@ ogorod-market/
 │       │   ├── app/           # App Router ((shop), (auth), (dashboard))
 │       │   ├── components/    # UI & Feature Components
 │       │   ├── hooks/         # Custom React Hooks
-│       │   ├── types/         # TypeScript Types (auto-generated)
-│       │   └── lib/           # Utilities & API Client
+│       │   └── types/         # TypeScript Types (auto-generated)
 │       └── package.json       # Node.js Dependencies (pnpm)
 ├── scripts/                   # Cross-project Scripts
 ├── docker-compose.yml         # Development Infrastructure
@@ -47,6 +46,7 @@ ogorod-market/
 - [x] Database seeding with sample vegetables
 - [x] Type-safe API client
 - [x] Responsive UI with Tailwind CSS
+- [x] Health-check endpoint for readiness probes
 
 ## 🚧 In Progress / Planned Features
 - [ ] Authentication & Authorization (JWT + Redis)
@@ -97,6 +97,7 @@ useEffect(() => { /* direct API calls */ }, [])
 
 ### API Design Principles
 - **RESTful endpoints** with `/api` prefix
+- **Health-check** endpoint at `/api/health`
 - **Async/await** throughout the backend
 - **Pydantic schemas** for request/response validation
 - **Automatic OpenAPI** documentation
@@ -106,7 +107,7 @@ useEffect(() => { /* direct API calls */ }, [])
 - **Async SQLAlchemy 2.0** with proper session management
 - **Alembic migrations** with autogenerate
 - **Foreign key constraints** and indexes
-- **UTC timestamps** with timezone awareness
+- **UTC timestamps** stored as timezone-aware values
 
 ## 🛠️ Development Commands
 

@@ -18,7 +18,7 @@ clean:
 
 wait-api:
 	@echo "Waiting for API to be ready..."
-	@until curl -s http://localhost:8000/health >/dev/null; do \
+	@until curl -s http://localhost:8000/api/health >/dev/null; do \
 		echo "Waiting for API..."; \
 		sleep 2; \
 	done
