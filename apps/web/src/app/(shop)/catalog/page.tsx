@@ -1,7 +1,6 @@
 'use client'
 
 import { useProducts } from '@/hooks/useProducts'
-import Link from 'next/link'
 
 export default function CatalogPage() {
   const { data: products, isLoading, error } = useProducts()
@@ -20,7 +19,9 @@ export default function CatalogPage() {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold text-green-800 mb-8">Каталог товаров</h1>
+      <h1 className="text-3xl font-bold text-green-800 mb-8">
+        Каталог товаров
+      </h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {products?.map((product) => (
@@ -31,13 +32,20 @@ export default function CatalogPage() {
             <h2 className="text-xl font-semibold text-green-700 mb-2">
               {product.name}
             </h2>
-            <p className="text-gray-600 mb-4 line-clamp-2">{product.description}</p>
+            <p className="text-gray-600 mb-4 line-clamp-2">
+              {product.description}
+            </p>
             <div className="flex justify-between items-center">
               <span className="text-2xl font-bold text-green-600">
                 {product.price} ₽
                 <span className="text-sm text-gray-500">/{product.unit}</span>
               </span>
-              <button className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors">
+              <button
+                type="button"
+                disabled
+                title="Добавление в корзину на сайте ещё не подключено"
+                className="bg-green-500 text-white px-4 py-2 rounded disabled:cursor-not-allowed disabled:opacity-60"
+              >
                 В корзину
               </button>
             </div>

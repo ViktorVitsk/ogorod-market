@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 
 import { AuthStatus } from '@/components/AuthStatus'
 
@@ -22,14 +23,12 @@ export default function RootLayout({
           <header className="bg-white shadow-sm">
             <div className="container mx-auto px-4 py-4 flex items-center justify-between">
               <h1 className="text-2xl font-bold text-green-800">
-                <a href="/">Огород Маркет</a>
+                <Link href="/">Огород Маркет</Link>
               </h1>
               <AuthStatus />
             </div>
           </header>
-          <main className="container mx-auto px-4 py-8">
-            {children}
-          </main>
+          <main className="container mx-auto px-4 py-8">{children}</main>
         </QueryProvider>
       </body>
     </html>

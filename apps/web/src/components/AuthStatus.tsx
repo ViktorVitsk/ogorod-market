@@ -11,7 +11,7 @@ export function AuthStatus() {
   const router = useRouter()
   const { data: user, isFetching, isLoading } = useCurrentUser()
   const { logout } = useAuthActions()
-  const [hasToken, setHasToken] = useState<boolean>(() => !!authStorage.get())
+  const [hasToken, setHasToken] = useState(false)
 
   useEffect(() => {
     setHasToken(!!authStorage.get())
@@ -24,11 +24,7 @@ export function AuthStatus() {
   }, [user])
 
   if (hasToken && (isLoading || isFetching) && !user) {
-    return (
-      <div className="text-sm text-gray-500">
-        Проверяем аккаунт...
-      </div>
-    )
+    return <div className="text-sm text-gray-500">Проверяем аккаунт...</div>
   }
 
   if (!user) {
@@ -58,9 +54,7 @@ export function AuthStatus() {
 
   return (
     <div className="flex items-center gap-3 text-sm text-gray-700">
-      <span className="font-medium">
-        {user.full_name ?? user.email}
-      </span>
+      <span className="font-medium">{user.full_name ?? user.email}</span>
       <button
         type="button"
         onClick={handleLogout}

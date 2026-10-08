@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
+import { getApiErrorMessage } from '@/app/api/client'
 import { useAuthActions } from '@/hooks/useAuth'
 
 export default function LoginPage() {
@@ -20,7 +21,7 @@ export default function LoginPage() {
       await loginMutation.mutateAsync({ email, password })
       router.push('/')
     } catch (err) {
-      setError((err as Error).message)
+      setError(getApiErrorMessage(err, 'Не удалось войти'))
     }
   }
 
@@ -32,14 +33,15 @@ export default function LoginPage() {
         </h1>
 
         {error ? (
-          <p className="mb-4 text-sm text-red-600 text-center">
-            {error}
-          </p>
+          <p className="mb-4 text-sm text-red-600 text-center">{error}</p>
         ) : null}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Email
             </label>
             <input
@@ -54,7 +56,10 @@ export default function LoginPage() {
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Пароль
             </label>
             <input

@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
+import { getApiErrorMessage } from '@/app/api/client'
 import { useAuthActions } from '@/hooks/useAuth'
 
 export default function RegisterPage() {
@@ -18,10 +19,14 @@ export default function RegisterPage() {
     event.preventDefault()
     setError(null)
     try {
-      await registerMutation.mutateAsync({ email, password, full_name: fullName || undefined })
+      await registerMutation.mutateAsync({
+        email,
+        password,
+        full_name: fullName || undefined,
+      })
       router.push('/login')
     } catch (err) {
-      setError((err as Error).message)
+      setError(getApiErrorMessage(err, 'Не удалось зарегистрироваться'))
     }
   }
 
@@ -33,14 +38,15 @@ export default function RegisterPage() {
         </h1>
 
         {error ? (
-          <p className="mb-4 text-sm text-red-600 text-center">
-            {error}
-          </p>
+          <p className="mb-4 text-sm text-red-600 text-center">{error}</p>
         ) : null}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Email
             </label>
             <input
@@ -55,7 +61,10 @@ export default function RegisterPage() {
           </div>
 
           <div>
-            <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="fullName"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Имя (необязательно)
             </label>
             <input
@@ -69,7 +78,10 @@ export default function RegisterPage() {
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Пароль
             </label>
             <input
