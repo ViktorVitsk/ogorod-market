@@ -21,6 +21,8 @@ services:
       dockerfile: Dockerfile
     environment:
       DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/ogorod-market
+      # Interpolated from the project .env. The API has no built-in secret.
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:?Set JWT_SECRET_KEY in the project .env}
     ports:
       - "8000:8000"
     depends_on:
@@ -38,8 +40,11 @@ services:
     build:
       context: ./apps/web
       dockerfile: Dockerfile
+      args:
+        # Baked into the browser bundle at build time. Must be reachable from the host.
+        NEXT_PUBLIC_API_URL: http://localhost:8000
     environment:
-      NEXT_PUBLIC_API_URL: http://api:8000
+      NEXT_PUBLIC_API_URL: http://localhost:8000
     ports:
       - "3000:3000"
     depends_on:

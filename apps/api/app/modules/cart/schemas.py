@@ -2,20 +2,16 @@ from datetime import datetime
 from decimal import Decimal
 from typing import List
 
-from pydantic import BaseModel, conint
+from pydantic import BaseModel, Field
 
 
-class CartItemBase(BaseModel):
+class CartItemCreate(BaseModel):
     product_id: int
-    quantity: conint(ge=1) = 1
-
-
-class CartItemCreate(CartItemBase):
-    price: Decimal
+    quantity: int = Field(default=1, ge=1)
 
 
 class CartItemUpdate(BaseModel):
-    quantity: conint(ge=1)
+    quantity: int = Field(ge=1)
 
 
 class CartItemRead(BaseModel):

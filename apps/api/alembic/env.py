@@ -6,13 +6,19 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from alembic import context
 
-# Импортируем БАЗОВУЮ модель и ВСЕ модели
+# Import every model so autogenerate sees the full metadata.
+from app.core.config import settings
 from app.core.database import Base
-from app.modules.catalog.models import Product  # Явно импортируем все модели
+from app.modules.auth.models import User
+from app.modules.cart.models import Cart, CartItem
+from app.modules.catalog.models import Product
+
+_ = (User, Product, Cart, CartItem)
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
+config.set_main_option('sqlalchemy.url', settings.database_url.replace('%', '%%'))
 
 # УБИРАЕМ проблемную конфигурацию логгирования
 # if config.config_file_name is not None:

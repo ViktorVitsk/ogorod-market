@@ -1,4 +1,4 @@
-.PHONY: up down logs build clean types wait-api
+.PHONY: up down logs build clean types wait-api rebuild seed migrate dev test
 
 up:
 	docker compose up -d
@@ -14,7 +14,6 @@ build:
 
 clean:
 	docker compose down -v
-	docker system prune -f
 
 wait-api:
 	@echo "Waiting for API to be ready..."
@@ -24,11 +23,10 @@ wait-api:
 	done
 	@echo "API is ready!"
 
-types: wait-api
+types:
 	cd apps/api && poetry run python ../../scripts/generate-openapi.py
-	cd apps/web && pnpm openapi-typescript ../../openapi.json --output src/types/api.d.ts
+	cd apps/web && pnpm exec openapi-typescript ../../openapi.json --output src/types/api.d.ts
 
-# Композитные команды (не нужны в .PHONY)
 rebuild: down build up logs
 
 seed:
@@ -37,4 +35,8 @@ seed:
 migrate:
 	docker compose exec api alembic upgrade head
 
-dev: down up types build logs
+dev:
+	docker compose up --build
+
+test:
+	cd apps/api && poetry run pytest

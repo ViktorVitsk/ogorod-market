@@ -39,7 +39,12 @@ async def register_user(db: AsyncSession, user_in: UserCreate) -> User:
 
 async def authenticate_user(db: AsyncSession, email: str, password: str) -> Token:
     user = await get_user_by_email(db, email)
-    if not user or not verify_password(password, user.hashed_password):
+    credentials_ok = (
+        user is not None
+        and user.is_active
+        and verify_password(password, user.hashed_password)
+    )
+    if not credentials_ok or user is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail='Incorrect email or password',

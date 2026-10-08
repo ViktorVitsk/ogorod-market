@@ -3,6 +3,7 @@ from typing import Any, Optional
 
 import jwt
 from fastapi import HTTPException, status
+from jwt.exceptions import PyJWTError
 from passlib.context import CryptContext
 
 from app.core.config import settings
@@ -22,20 +23,21 @@ def create_access_token(subject: str, expires_minutes: Optional[int] = None) -> 
 
 
 def verify_token(token: str) -> int:
+    credentials_error = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail='Could not validate credentials',
+        headers={'WWW-Authenticate': 'Bearer'},
+    )
     try:
         payload = jwt.decode(
             token, settings.jwt_secret_key, algorithms=[settings.jwt_algorithm]
         )
-        subject: str = payload.get('sub')
+        subject = payload.get('sub')
         if subject is None:
-            raise ValueError('Token subject missing')
+            raise credentials_error
         return int(subject)
-    except jwt.PyJWTError as exc:  # type: ignore[attr-defined]
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail='Could not validate credentials',
-            headers={'WWW-Authenticate': 'Bearer'},
-        ) from exc
+    except (PyJWTError, ValueError, TypeError) as exc:
+        raise credentials_error from exc
 
 
 def hash_password(password: str) -> str:

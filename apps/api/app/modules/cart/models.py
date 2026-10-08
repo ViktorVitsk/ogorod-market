@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import DateTime, ForeignKey, Integer, Numeric
+from sqlalchemy import DateTime, ForeignKey, Integer, Numeric, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import func
 
@@ -24,7 +24,7 @@ class Cart(Base):
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         server_default=func.now(),
-        server_onupdate=func.now(),
+        onupdate=func.now(),
         nullable=False,
     )
 
@@ -37,6 +37,13 @@ class Cart(Base):
 
 class CartItem(Base):
     __tablename__ = 'cart_items'
+    __table_args__ = (
+        UniqueConstraint(
+            'cart_id',
+            'product_id',
+            name='uq_cart_items_cart_id_product_id',
+        ),
+    )
 
     id: Mapped[int] = mapped_column(primary_key=True)
     cart_id: Mapped[int] = mapped_column(
@@ -67,7 +74,7 @@ class CartItem(Base):
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         server_default=func.now(),
-        server_onupdate=func.now(),
+        onupdate=func.now(),
         nullable=False,
     )
 

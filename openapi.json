@@ -127,6 +127,7 @@
             "required": false,
             "schema": {
               "type": "integer",
+              "minimum": 0,
               "default": 0,
               "title": "Skip"
             }
@@ -137,6 +138,8 @@
             "required": false,
             "schema": {
               "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
               "default": 100,
               "title": "Limit"
             }
@@ -587,23 +590,11 @@
             "minimum": 1.0,
             "title": "Quantity",
             "default": 1
-          },
-          "price": {
-            "anyOf": [
-              {
-                "type": "number"
-              },
-              {
-                "type": "string"
-              }
-            ],
-            "title": "Price"
           }
         },
         "type": "object",
         "required": [
-          "product_id",
-          "price"
+          "product_id"
         ],
         "title": "CartItemCreate"
       },
@@ -735,6 +726,7 @@
           },
           "price": {
             "type": "number",
+            "exclusiveMinimum": 0.0,
             "title": "Price"
           },
           "unit": {
@@ -744,6 +736,7 @@
           },
           "stock_quantity": {
             "type": "integer",
+            "minimum": 0.0,
             "title": "Stock Quantity",
             "default": 0
           },
@@ -822,6 +815,7 @@
           },
           "price": {
             "type": "number",
+            "exclusiveMinimum": 0.0,
             "title": "Price"
           },
           "unit": {
@@ -831,6 +825,7 @@
           },
           "stock_quantity": {
             "type": "integer",
+            "minimum": 0.0,
             "title": "Stock Quantity",
             "default": 0
           },
@@ -908,7 +903,8 @@
           "price": {
             "anyOf": [
               {
-                "type": "number"
+                "type": "number",
+                "exclusiveMinimum": 0.0
               },
               {
                 "type": "null"
@@ -930,7 +926,8 @@
           "stock_quantity": {
             "anyOf": [
               {
-                "type": "integer"
+                "type": "integer",
+                "minimum": 0.0
               },
               {
                 "type": "null"

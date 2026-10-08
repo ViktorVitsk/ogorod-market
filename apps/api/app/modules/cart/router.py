@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
@@ -16,6 +16,11 @@ async def read_cart(
     db: AsyncSession = Depends(get_db),
 ):
     cart = await service.get_cart(db, current_user.id)
+    if cart is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail='Cart not found',
+        )
     return cart
 
 
@@ -26,8 +31,9 @@ async def add_item(
     db: AsyncSession = Depends(get_db),
 ):
     cart = await service.get_or_create_cart(db, current_user.id)
-    cart = await service.add_or_update_item(db, cart, item_in)
-    return cart
+    return await service.add_or_update_item(
+        db, cart, item_in.product_id, item_in.quantity
+    )
 
 
 @router.patch('/items/{item_id}', response_model=schemas.CartRead)
@@ -37,17 +43,13 @@ async def update_item(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    cart = await service.get_or_create_cart(db, current_user.id)
-    item = await service.add_or_update_item(  # обновим количество
-        db,
-        cart,
-        schemas.CartItemCreate(
-            product_id=item_id,  # см. примечание ниже
-            quantity=item_in.quantity,
-            price=await service.calculate_price(db, item_id),
-        ),
-    )
-    return item
+    cart = await service.get_cart(db, current_user.id)
+    if cart is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail='Cart not found',
+        )
+    return await service.update_item_quantity(db, cart, item_id, item_in.quantity)
 
 
 @router.delete('/items/{item_id}', response_model=schemas.CartRead)
@@ -56,6 +58,10 @@ async def delete_item(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    cart = await service.get_or_create_cart(db, current_user.id)
-    cart = await service.remove_item(db, cart, item_id)
-    return cart
+    cart = await service.get_cart(db, current_user.id)
+    if cart is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail='Cart not found',
+        )
+    return await service.remove_item(db, cart, item_id)

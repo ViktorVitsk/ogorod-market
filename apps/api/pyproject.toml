@@ -26,7 +26,8 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "pytest>=8.4.1,<9.0.0",
-    "httpx>=0.28.1,<0.29.0"
+    "httpx>=0.28.1,<0.29.0",
+    "aiosqlite>=0.21.0,<0.22.0"
 ]
 
 [build-system]
@@ -35,6 +36,9 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 packages = [{include = "app"}]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
 
 [tool.ruff]
 line-length = 88

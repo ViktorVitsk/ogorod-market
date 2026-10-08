@@ -191,8 +191,6 @@ export interface components {
              * @default 1
              */
             quantity: number;
-            /** Price */
-            price: number | string;
         };
         /** CartItemRead */
         CartItemRead: {

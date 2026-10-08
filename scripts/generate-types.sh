@@ -1,12 +1,17 @@
 #!/bin/bash
+set -euo pipefail
 cd "$(dirname "$0")/.."
 
-# Генерируем OpenAPI схему
 echo "Generating OpenAPI schema..."
-python scripts/generate-openapi.py
+(
+  cd apps/api
+  poetry run python ../../scripts/generate-openapi.py
+)
 
-# Генерируем TypeScript типы
 echo "Generating TypeScript types..."
-npx openapi-typescript ../openapi.json --output src/types/api.d.ts
+(
+  cd apps/web
+  pnpm exec openapi-typescript ../../openapi.json --output src/types/api.d.ts
+)
 
-echo "✅ TypeScript types generated: src/types/api.d.ts"
+echo "TypeScript types generated: apps/web/src/types/api.d.ts"

@@ -1,4 +1,6 @@
+from fastapi import HTTPException, status
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from .models import Product
@@ -29,7 +31,14 @@ async def get_product_by_slug(db: AsyncSession, slug: str):
 async def create_product(db: AsyncSession, product_in: ProductCreate) -> Product:
     product = Product(**product_in.model_dump())
     db.add(product)
-    await db.commit()
+    try:
+        await db.commit()
+    except IntegrityError:
+        await db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail='Product with this slug already exists',
+        ) from None
     await db.refresh(product)
     return product
 
@@ -40,7 +49,14 @@ async def update_product(
     update_data = product_in.model_dump(exclude_unset=True)
     for field, value in update_data.items():
         setattr(product, field, value)
-    await db.commit()
+    try:
+        await db.commit()
+    except IntegrityError:
+        await db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail='Product with this slug already exists',
+        ) from None
     await db.refresh(product)
     return product
 
