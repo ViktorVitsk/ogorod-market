@@ -2,6 +2,7 @@ import asyncio
 from collections.abc import Awaitable, Callable
 
 from httpx import ASGITransport, AsyncClient
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.pool import StaticPool
 
@@ -86,15 +87,34 @@ async def register_and_login(
     return {'Authorization': f"Bearer {logged_in.json()['access_token']}"}
 
 
+async def grant_superuser(api: ApiHarness, email: str) -> None:
+    async with api.session_factory() as session:
+        result = await session.execute(select(User).where(User.email == email))
+        user = result.scalar_one()
+        user.is_superuser = True
+        await session.commit()
+
+
+async def admin_headers(
+    api: ApiHarness,
+    email: str = 'admin@example.com',
+) -> dict[str, str]:
+    headers = await register_and_login(api.client, email=email, full_name='Admin')
+    await grant_superuser(api, email)
+    return headers
+
+
 async def create_product(
     client: AsyncClient,
     *,
+    headers: dict[str, str],
     name: str = 'Cucumber',
     slug: str = 'cucumber',
     price: float = 10.5,
 ) -> dict:
     response = await client.post(
         '/api/products/',
+        headers=headers,
         json={
             'name': name,
             'slug': slug,

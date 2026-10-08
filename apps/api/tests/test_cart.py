@@ -1,6 +1,12 @@
 from decimal import Decimal
 
-from tests.api import ApiHarness, async_api, create_product, register_and_login
+from tests.api import (
+    ApiHarness,
+    admin_headers,
+    async_api,
+    create_product,
+    register_and_login,
+)
 
 
 @async_api
@@ -19,7 +25,8 @@ async def test_empty_cart_is_not_found(api: ApiHarness):
 @async_api
 async def test_item_price_comes_from_the_catalog(api: ApiHarness):
     headers = await register_and_login(api.client)
-    product = await create_product(api.client, price=10.5)
+    catalog = await admin_headers(api)
+    product = await create_product(api.client, headers=catalog, price=10.5)
 
     added = await api.client.post(
         '/api/cart/items',
@@ -49,8 +56,13 @@ async def test_item_price_comes_from_the_catalog(api: ApiHarness):
 @async_api
 async def test_patch_updates_the_cart_item_rather_than_a_product_id(api: ApiHarness):
     headers = await register_and_login(api.client)
-    first = await create_product(api.client, name='Cucumber', slug='cucumber', price=5)
-    second = await create_product(api.client, name='Tomato', slug='tomato', price=9)
+    catalog = await admin_headers(api)
+    first = await create_product(
+        api.client, headers=catalog, name='Cucumber', slug='cucumber', price=5
+    )
+    second = await create_product(
+        api.client, headers=catalog, name='Tomato', slug='tomato', price=9
+    )
     added = await api.client.post(
         '/api/cart/items',
         headers=headers,
@@ -77,6 +89,7 @@ async def test_patch_updates_the_cart_item_rather_than_a_product_id(api: ApiHarn
 @async_api
 async def test_missing_product_and_missing_item_return_404(api: ApiHarness):
     headers = await register_and_login(api.client)
+    catalog = await admin_headers(api)
     missing_product = await api.client.post(
         '/api/cart/items',
         headers=headers,
@@ -84,7 +97,7 @@ async def test_missing_product_and_missing_item_return_404(api: ApiHarness):
     )
     assert missing_product.status_code == 404
 
-    product = await create_product(api.client)
+    product = await create_product(api.client, headers=catalog)
     added = await api.client.post(
         '/api/cart/items',
         headers=headers,
@@ -102,7 +115,8 @@ async def test_missing_product_and_missing_item_return_404(api: ApiHarness):
 @async_api
 async def test_delete_item_and_reject_inactive_product(api: ApiHarness):
     headers = await register_and_login(api.client)
-    product = await create_product(api.client, slug='cabbage')
+    catalog = await admin_headers(api)
+    product = await create_product(api.client, headers=catalog, slug='cabbage')
     added = await api.client.post(
         '/api/cart/items',
         headers=headers,
@@ -114,7 +128,7 @@ async def test_delete_item_and_reject_inactive_product(api: ApiHarness):
     assert removed.status_code == 200
     assert removed.json()['items'] == []
 
-    await api.client.delete(f"/api/products/{product['id']}")
+    await api.client.delete(f"/api/products/{product['id']}", headers=catalog)
     inactive = await api.client.post(
         '/api/cart/items',
         headers=headers,

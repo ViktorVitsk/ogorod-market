@@ -1,6 +1,6 @@
 # Ogorod Market
 
-Ogorod Market is a small full-stack prototype of an online vegetable shop. It is a portfolio and learning project: a browser storefront, a JSON API, and a PostgreSQL schema, brought up together with Docker Compose. It is not a commercial store and it does not take payments.
+Ogorod Market is an unfinished prototype of a small online shop for a family farm. The author built it independently in 2025 and used AI coding assistants as helpers. It was never put into operation. It is not a video-course exercise and it is not a commercial store.
 
 ## Architecture
 
@@ -23,7 +23,7 @@ The browser has to call a host it can resolve. `http://api:8000` works only insi
 ## What is implemented
 
 - `GET /api/health`. This checks that the process responds. It does not check the database.
-- Catalog: list, read by id, read by slug, create, partial update, and soft delete. Read endpoints return active products only. The seed script inserts five vegetables when the table is empty.
+- Catalog reads are public: list, read by id, and read by slug. They return active products only. Create, partial update, and soft delete require a signed-in user with `is_superuser`. Registration cannot set that flag. There is no admin screen; the flag is changed in the database, for example `UPDATE users SET is_superuser = true WHERE email = '...'`. The seed script inserts five vegetables directly and does not go through this check.
 - Accounts: email registration, login, and `GET /api/auth/me`. Passwords are hashed with PBKDF2-SHA256 and must be at least 8 characters. Login returns a JWT access token. The storefront keeps that token in `localStorage`.
 - Cart API for a signed-in user: read the cart, set a line quantity, change that quantity, and remove a line. The line price is copied from the catalog when the line is created. The client cannot choose the price. `PATCH` and `DELETE` use the cart line id.
 - Storefront: home page, catalog, login, registration, and a header that shows the signed-in account. The catalog button "В корзину" is disabled. The page does not call the cart API.
@@ -32,11 +32,10 @@ The browser has to call a host it can resolve. `http://api:8000` works only insi
 
 - Checkout, orders, payments, and delivery.
 - A cart page, and adding a product from the catalog UI.
-- Refresh tokens, server-side logout, OAuth, and an admin role. `is_superuser` is stored and unused.
+- Refresh tokens, server-side logout, OAuth, and an admin interface. `is_superuser` only gates catalog writes.
 - Categories. `category_id` is a nullable integer with no related table.
 - Product images. The seed data refers to paths the app does not serve.
 - Stock checks. A cart line can request more units than `stock_quantity`.
-- Protected catalog writes. Anyone who can reach the API can create, edit, or hide products.
 
 ## Stack
 
@@ -101,7 +100,9 @@ make types
 
 ## Checks
 
-The API tests use an in-memory SQLite database. They cover token rejection, registration and login, catalog validation, and the cart rules described above. They do not apply the Alembic migrations and they are not a substitute for PostgreSQL.
+The API tests use an in-memory SQLite database. They cover token rejection, registration and login, catalog permissions, and the cart rules described above. They do not apply the Alembic migrations and they are not a substitute for PostgreSQL.
+
+Docker Compose was not started during this preparation. Docker is not available in the environment where the repository was reviewed, so migration on PostgreSQL is still unchecked.
 
 ```bash
 cd apps/api
@@ -123,7 +124,7 @@ pnpm build
 
 ## Limitations
 
-- Catalog mutations are public.
+- There is no screen or API for granting `is_superuser`. A database update is the only way, and that is easy to forget on a fresh install.
 - The access token is stored in `localStorage`. There is no refresh token. A stolen token stays valid until it expires, which is 60 minutes by default.
 - The example JWT secret and the Compose database password are development defaults, and both are visible in the repository.
 - CORS allows the local web origins. `app/core/middleware.py` still contains placeholder production domains. That is not a deployment configuration.
@@ -135,6 +136,6 @@ pnpm build
 
 ## Use of AI assistants
 
-AI coding assistants were used while this prototype was built. `AI_README.md` and `AGENTS.md` were added as context for those assistants. Parts of both files fell behind the code. The git history still contains experimental and incomplete commits, and that history was left intact.
+AI coding assistants helped with scaffolding, some features, and a later review of defects. `AI_README.md` and `AGENTS.md` were written as context for those assistants and are not a course syllabus. The git history still contains experimental and incomplete commits from 2025, and that history was left intact.
 
-A later pass, also done with an AI assistant, compared the repository with the code that actually runs. It fixed confirmed defects: a built-in JWT signing key, cart prices taken from the client, cart updates that used the wrong id, cart responses that dropped their lines, a browser API origin the browser could not reach, and an ESLint setup that failed before it could lint. The pass did not add a store, checkout, or an admin panel. Changes stayed only where tests or a local run supported them.
+The review fixed confirmed defects, including a built-in JWT signing key, cart pricing, and open catalog writes. It did not finish the shop: there is still no checkout, and the catalog page does not call the cart API.

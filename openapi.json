@@ -178,6 +178,11 @@
         ],
         "summary": "Create Product",
         "operationId": "create_product_api_products__post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -259,6 +264,11 @@
         ],
         "summary": "Update Product",
         "operationId": "update_product_api_products__product_id__patch",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
         "parameters": [
           {
             "name": "product_id",
@@ -309,6 +319,11 @@
         ],
         "summary": "Delete Product",
         "operationId": "delete_product_api_products__product_id__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
         "parameters": [
           {
             "name": "product_id",
