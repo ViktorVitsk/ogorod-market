@@ -1,5 +1,9 @@
 # 🥒 Ogorod Market - Документация для AI Agents
 
+> Этот файл — ранний бриф. Часть статуса ниже устарела: аутентификация и API корзины уже есть, модулей заказов и AI нет. Текущее описание проекта — корневой `README.md`.
+
+
+
 ## 📁 Структура проекта (Monorepo)
 
 ```
@@ -50,10 +54,17 @@ ogorod-market/
 
 ### Key Endpoints
 ```
-GET    /api/health           # Проверка статуса
-GET    /api/products/        # Список товаров
-GET    /api/products/{id}    # Товар по ID  
-GET    /api/products/by-slug/{slug}  # Товар по slug
+GET    /api/health
+GET    /api/products/
+GET    /api/products/{id}
+GET    /api/products/by-slug/{slug}
+POST   /api/auth/register
+POST   /api/auth/login
+GET    /api/auth/me
+GET    /api/cart/
+POST   /api/cart/items
+PATCH  /api/cart/items/{item_id}
+DELETE /api/cart/items/{item_id}
 ```
 
 ### CORS Configuration
@@ -115,8 +126,8 @@ make seed
 ## 🔮 Планы развития (Roadmap)
 
 ### Short-term (сейчас)
-- [ ] Аутентификация (JWT + Redis)
-- [ ] Корзина покупок
+- [x] Аутентификация JWT (без Redis и refresh-токенов)
+- [x] API корзины (UI корзины нет)
 - [ ] Оформление заказов
 
 ### Medium-term 
